@@ -207,7 +207,8 @@ bool handleMidi(int snum, int c)
             }
         }
 
-        display(0,"sending midi(0x%02x 0x%02x 0x%02x 0x%02x) to snum=%d",buf[0],buf[1],buf[2],buf[3],snum);
+        display(0,"teensyLooper - serial midi %s (0x%02x 0x%02x 0x%02x 0x%02x) snum=%d",
+            snum ? "TE-->RPI" : "RPI-->TE", buf[0],buf[1],buf[2],buf[3],snum);
 
         if (snum)
             Serial1.write(buf,4);
@@ -286,7 +287,7 @@ void loop()
         int c = Serial2.read();
         if (!handleMidi(1,c))
         {
-            #if 1
+            #if 0
                 display(0,"te: 0x%02x",c);
             #else
 
