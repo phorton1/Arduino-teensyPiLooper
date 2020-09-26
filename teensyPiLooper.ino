@@ -48,6 +48,16 @@
 //       the TE, via the Looper2 teensy connected to a windows machine, while
 //       the TE is actually connected to the iPad.
 //
+//     - handle "file_server" traffic coming in over the main Serial and
+//       send it to Serial2 (the teensyExpression serial port).  This is
+//       weird and the ultimate complexity. File_serve_mode is turned on
+//       by a ctrl-A and lasts for 10 seconds (as long as there is some
+//       Serial traffic coming in).
+//
+//       The console.pm program sends out the ctrl-A if -rpi and -file_server
+//       befre e
+//
+//
 // Note that we DONT use the READY state any of this, though concievably
 // we could use it to filter stuff without looking at it so much, I don't
 // want to build that dependency into the code at this point.
@@ -87,9 +97,10 @@
 // we have to buffer, and break on carriage returns,
 // and present a "header" before the line oriented degug output
 
-
-
 #include "myDebug.h"
+
+#define dbg_tpi  1
+
 
 #define SENSE_RPI_RUN       11      // sense rpi RUN (REBBOOT) pin, HIGH == rpi has voltage
 #define SENSE_RPI_READY     4       // sense rpi GPIO25, HIGH == my program has initialized
@@ -123,6 +134,11 @@ elapsedMillis  m_key_timer;
 int line_ptr = 0;
 unsigned char line_buffer[MAX_LINE_BUFFER];
 
+bool file_server_mode = 0;
+elapsedMillis file_server_time = 0;
+
+#define FILE_SERVER_TIMEOUT 10000
+
 
 //-------------------------------------------------
 
@@ -145,7 +161,7 @@ void setup()
 {
     Serial.begin(115200);
     delay(2000);
-    display(0,"teensyPiLooper v1.0 started",0);
+    display(0,"teensyPiLooper v2.0 started",0);
     Serial1.begin(115200);
     Serial2.begin(115200);
 
@@ -165,6 +181,8 @@ void setup()
     digitalWrite(PIN_PI_REBOOT,0);
     digitalWrite(LED_RPI_RUN,0);
     digitalWrite(LED_RPI_READY,1);
+
+    display(0,"%s",file_server_mode?"FILE_SERVER_MODE ON":"file_server_mode_off");
 
     rebootPi();
         // if both are started at the same time,
@@ -207,7 +225,8 @@ bool handleMidi(int snum, int c)
             }
         }
 
-        display(0,"sending midi(0x%02x 0x%02x 0x%02x 0x%02x) to snum=%d",buf[0],buf[1],buf[2],buf[3],snum);
+        display(dbg_tpi,"teensyLooper - serial midi %s (0x%02x 0x%02x 0x%02x 0x%02x) snum=%d",
+            snum ? "TE-->RPI" : "RPI-->TE", buf[0],buf[1],buf[2],buf[3],snum);
 
         if (snum)
             Serial1.write(buf,4);
@@ -241,6 +260,12 @@ void loop()
     if (Serial.available())
     {
         int c = Serial.read();
+
+        if (dbg_tpi==0 && file_server_mode)
+        {
+            display(0,"teensyPiLoper got Serial: chr=0x%02x '%c'",c,c>32?c:' ');
+        }
+
         if (m_key_pressed)
         {
             Serial.write(m_key_pressed);
@@ -248,7 +273,7 @@ void loop()
             m_key_pressed = c;
             m_key_timer = 0;
         }
-        else if (c == 2 &&
+        else if ((c == 1 || c == 2) &&            // ctrlA or ctrlB
             m_key_timer > KEYPRESS_IDLE_TIME)
         {
             m_key_pressed = c;
@@ -256,17 +281,36 @@ void loop()
         }
         else
         {
-            Serial1.write(c);
+            // normally we write the incoming bytes to the rPi ..
+            // in file_server_mode, we write them to the teenssyExpression
+            // over the Serial2 port
+
+            if (file_server_mode)
+            {
+                display(dbg_tpi,"teensyPiLoper sending Serial2: chr=0x%02x '%c'",c,c>32?c:' ');
+                Serial2.write(c);
+            }
+            else
+            {
+                Serial1.write(c);
+            }
+
             m_key_timer = 0;
         }
     }
     else if (m_key_pressed &&
         m_key_timer > KEYPRESS_IDLE_TIME)
     {
-        uint32_t retval = m_key_pressed;
+        uint32_t delayed_key = m_key_pressed;
         m_key_timer = 0;
         m_key_pressed = 0;
-        if (retval == 2)
+        if (delayed_key == 1)
+        {
+            file_server_mode = 1;
+            display(0,"%s",file_server_mode?"FILE_SERVER_MODE ON":"file_server_mode_off");
+            file_server_time = 0;
+        }
+        if (delayed_key == 2)
         {
             rebootPi();
         }
@@ -286,28 +330,45 @@ void loop()
         int c = Serial2.read();
         if (!handleMidi(1,c))
         {
-            #if 1
-                display(0,"te: 0x%02x",c);
-            #else
+            if (file_server_mode)
+            {
+                Serial.write(c);
+                file_server_time = 0;
+            }
+            else
+            {
+                #if 0
+                    display(0,"te: 0x%02x",c);
+                #else
 
-                if (c == 0xA || c == 0xD || line_ptr >= MAX_LINE_BUFFER-3)
-                {
-                    if (line_ptr)
+                    if (c == 0xA || c == 0xD || line_ptr >= MAX_LINE_BUFFER-3)
                     {
-                        Serial.print("TE: ");
-                        Serial.println((const char *)line_buffer);
+                        if (line_ptr)
+                        {
+                            Serial.print("TE: ");
+                            Serial.println((const char *)line_buffer);
+                        }
+                        line_buffer[0] = 0;
+                        line_ptr = 0;
                     }
-                    line_buffer[0] = 0;
-                    line_ptr = 0;
-                }
-                else
-                {
-                    line_buffer[line_ptr++] = c;
-                    line_buffer[line_ptr] = 0;
-                }
-            #endif
-        }
+                    else
+                    {
+                        line_buffer[line_ptr++] = c;
+                        line_buffer[line_ptr] = 0;
+                    }
+                #endif
+
+            }   // Not file_server_mode (TE alternate debugging/monitor output)
+        }   // Not 0x0b (midi message start)
+    }   // Serial2.available()
+
+
+    if (file_server_mode && file_server_time > FILE_SERVER_TIMEOUT)
+    {
+        file_server_mode = 0;
+        display(0,"%s",file_server_mode?"FILE_SERVER_MODE ON":"file_server_mode_off");
     }
+
 
     if (blink_time > (blink_state ? BLINK_ON_TIME : BLINK_OFF_TIME))
     {
