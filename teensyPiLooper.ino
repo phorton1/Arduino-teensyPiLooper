@@ -225,7 +225,11 @@ bool handleMidi(int snum, int c)
             }
         }
 
+<<<<<<< HEAD
         display(dbg_tpi,"teensyLooper - serial midi %s (0x%02x 0x%02x 0x%02x 0x%02x) snum=%d",
+=======
+        display(0,"teensyLooper - serial midi %s (0x%02x 0x%02x 0x%02x 0x%02x) snum=%d",
+>>>>>>> d5ba9a810857df304e86df8aa2a24bd7cbf1fb59
             snum ? "TE-->RPI" : "RPI-->TE", buf[0],buf[1],buf[2],buf[3],snum);
 
         if (snum)
@@ -330,6 +334,7 @@ void loop()
         int c = Serial2.read();
         if (!handleMidi(1,c))
         {
+<<<<<<< HEAD
             if (file_server_mode)
             {
                 Serial.write(c);
@@ -340,6 +345,11 @@ void loop()
                 #if 0
                     display(0,"te: 0x%02x",c);
                 #else
+=======
+            #if 0
+                display(0,"te: 0x%02x",c);
+            #else
+>>>>>>> d5ba9a810857df304e86df8aa2a24bd7cbf1fb59
 
                     if (c == 0xA || c == 0xD || line_ptr >= MAX_LINE_BUFFER-3)
                     {
