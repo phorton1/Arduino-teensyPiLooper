@@ -55,7 +55,8 @@
 //       Serial traffic coming in).
 //
 //       The console.pm program sends out the ctrl-A if -rpi and -file_server
-//       befre e
+//
+//       need both -rpi and -file_server !!! CONSOLE 3 -RPI -FILE_SERVER !!!!
 //
 //
 // Note that we DONT use the READY state any of this, though concievably
@@ -100,7 +101,7 @@
 #include "myDebug.h"
 
 #define dbg_fs_data  1
-#define dbg_midi_data  1
+#define dbg_midi_data  0
 
 
 #define SENSE_RPI_RUN       11      // sense rpi RUN (REBBOOT) pin, HIGH == rpi has voltage
