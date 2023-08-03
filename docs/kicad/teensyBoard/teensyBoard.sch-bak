@@ -225,4 +225,10 @@ Text Notes 4550 5800 3    50   ~ 0
 RPI GPIO12 PIN 32
 Text Notes 4650 5800 3    50   ~ 0
 RPI GPIO16 PIN 36
+Text Notes 4850 5800 3    50   ~ 0
+GND
+Text Notes 4950 5800 3    50   ~ 0
+SLEEVE
+Text Notes 5050 5800 3    50   ~ 0
+TIP
 $EndSCHEMATC

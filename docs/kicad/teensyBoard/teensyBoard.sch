@@ -101,10 +101,8 @@ Text GLabel 5000 2150 1    50   Input ~ 0
 LED_PI_RUN
 Text GLabel 5100 2150 1    50   Input ~ 0
 LED_PI_READY
-Text GLabel 4600 5300 1    50   Input ~ 0
-I2S_LED2
 Text GLabel 4500 5300 1    50   Input ~ 0
-I2S_LED1
+I2S_RX_LED
 Text GLabel 3900 2150 1    50   Input ~ 0
 VUSB
 Text GLabel 4200 5300 1    50   Input ~ 0
@@ -180,9 +178,7 @@ LED_PI_RUN
 Text GLabel 6900 1900 3    50   Input ~ 0
 LED_PI_READY
 Text GLabel 7000 1900 3    50   Input ~ 0
-I2S_LED1
-Text GLabel 7100 1900 3    50   Input ~ 0
-I2S_LED2
+I2S_RX_LED
 $Comp
 L power:GND #PWR?
 U 1 1 64D14989
@@ -231,4 +227,8 @@ Text Notes 4950 5800 3    50   ~ 0
 SLEEVE
 Text Notes 5050 5800 3    50   ~ 0
 TIP
+Text GLabel 4600 5300 1    50   Input ~ 0
+I2S_TX_LED
+Text GLabel 7100 1900 3    50   Input ~ 0
+I2S_TX_LED
 $EndSCHEMATC
