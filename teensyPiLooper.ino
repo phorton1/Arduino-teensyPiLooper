@@ -103,6 +103,8 @@
 #define dbg_fs_data  1
 #define dbg_midi_data  0
 
+#define TEENSY_PI_LOOPER_VERSION  "v2.1"
+
 
 #define SENSE_RPI_RUN       11      // sense rpi RUN (REBBOOT) pin, HIGH == rpi has voltage
 #define SENSE_RPI_READY     4       // sense rpi GPIO25, HIGH == my program has initialized
@@ -162,8 +164,8 @@ void rebootPi()
 void setup()
 {
     Serial.begin(115200);
-    delay(2000);
-    display(0,"teensyPiLooper v2.0 started",0);
+    delay(5000);
+    display(0,"teensyPiLooper " TEENSY_PI_LOOPER_VERSION " started",0);
     Serial1.begin(115200);
     Serial2.begin(115200);
 
