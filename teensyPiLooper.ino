@@ -119,6 +119,8 @@
     // for the onboard led
 
 #define KEYPRESS_IDLE_TIME  200
+#define FILE_SERVER_TIMEOUT 16000
+
 #define MAX_LINE_BUFFER     512
 
 
@@ -141,7 +143,7 @@ unsigned char line_buffer[MAX_LINE_BUFFER];
 bool file_server_mode = 0;
 elapsedMillis file_server_time = 0;
 
-#define FILE_SERVER_TIMEOUT 10000
+
 
 
 //-------------------------------------------------
@@ -165,6 +167,7 @@ void setup()
 {
     Serial.begin(115200);
     delay(5000);
+    setColorString(COLOR_CONST_DEFAULT, "\033[94m");       // bright blue
     display(0,"teensyPiLooper " TEENSY_PI_LOOPER_VERSION " started",0);
     Serial1.begin(115200);
     Serial2.begin(115200);
@@ -186,7 +189,7 @@ void setup()
     digitalWrite(LED_RPI_RUN,0);
     digitalWrite(LED_RPI_READY,1);
 
-    display(0,"%s",file_server_mode?"FILE_SERVER_MODE ON":"file_server_mode_off");
+    display(0,"%s",file_server_mode?"FILE_SERVER_MODE ON":"FILE_SERVER_MODE OFF");
 
     rebootPi();
         // if both are started at the same time,
@@ -311,7 +314,7 @@ void loop()
         if (delayed_key == 1)
         {
             file_server_mode = 1;
-            display(0,"%s",file_server_mode?"FILE_SERVER_MODE ON":"file_server_mode_off");
+            display(0,"%s",file_server_mode?"FILE_SERVER_MODE ON":"FILE_SERVER_MODE OFF");
             file_server_time = 0;
         }
         if (delayed_key == 2)
