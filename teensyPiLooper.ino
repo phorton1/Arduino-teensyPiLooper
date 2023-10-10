@@ -98,7 +98,7 @@
 // we have to buffer, and break on carriage returns,
 // and present a "header" before the line oriented degug output
 
-#include "myDebug.h"
+#include <myDebug.h>
 
 #define dbg_fs_data  1
 #define dbg_midi_data  0
