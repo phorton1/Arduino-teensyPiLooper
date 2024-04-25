@@ -177,7 +177,7 @@ void setup()
     m_key_pressed = 0;
     m_key_timer = 0;
 
-    pinMode(SENSE_RPI_RUN,INPUT_PULLDOWN);
+    pinMode(SENSE_RPI_RUN,INPUT_PULLUP);
     pinMode(SENSE_RPI_READY,INPUT_PULLDOWN);
 
     pinMode(LED_ONBOARD,OUTPUT);
