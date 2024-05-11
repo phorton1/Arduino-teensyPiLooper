@@ -1,0 +1,7 @@
+# For my projects with kicad folders
+
+_autosave-*
+*.kicad_pcb-bak
+*.kicad_sch-bak
+*-cache.lib
+*fp-info-cache
