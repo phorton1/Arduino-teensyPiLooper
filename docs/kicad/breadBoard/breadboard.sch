@@ -1476,4 +1476,6 @@ F 3 "" H 3950 5800 50  0001 C CNN
 	1    3950 5800
 	0    -1   -1   0   
 $EndComp
+Text Notes 1050 700  0    79   ~ 0
+This schematic is for a breadboard I made while developing TE3
 $EndSCHEMATC

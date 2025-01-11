@@ -290,6 +290,4 @@ Text Notes 2950 3600 0    50   ~ 0
 LED_PI_RUN
 Text Notes 2900 3850 0    50   ~ 0
 ONBOARD_LED
-Text Notes 2550 1950 0    79   ~ 0
-This schematic matches the perf-board LED board in the Looper2 box
 $EndSCHEMATC

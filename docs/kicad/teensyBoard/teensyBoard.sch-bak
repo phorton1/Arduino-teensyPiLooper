@@ -1297,6 +1297,6 @@ E2 DC 7B D0 60 7F 6D E2 49 4A 79 6A D5 33 30 AB 77 9C 61 47 38 97 1E B4 4D 85 86
 59 C8 8D 57 00 00 00 00 49 45 4E 44 AE 42 60 82 
 EndData
 $EndBitmap
-Text Notes 3200 1000 0    79   ~ 0
+Text Notes 2600 850  0    98   ~ 0
 This schematic matches the perf board teensy 3.2 circuit in the Looper2 box
 $EndSCHEMATC
