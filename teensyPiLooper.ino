@@ -1,29 +1,33 @@
-// 2020-09-25
-//
-// Branched off "teensyPi" to "teensyPiLooper" as a version
-// specific to the Looper2 and TeensyExpressoin Boxes.
+// 2025-03-09  rework for compatability with TE3
 //
 // There are 3 serial ports involved in this scheme.
 //
-//     Serial -  the main usb serial port on the teensy,
-//               either connected to my windows machine
-//               or not.
-//     Serial1 - the serial port connected to the rPi
-//     Serial2 - the serial port connected to the teensyExpression
+//     SERIAL_PORT_USB = Serial -the main usb serial port on the
+//          teensy 3.2, either connected to my windows machine, or not.
+//     SERIAL_PORT_RPI = Serial1 - the serial port connected to the rPi
+//     SERIAL_PORT_TE  = Serial2 - the serial port connected to the
+//          teensyExpression by a 1/8" stereo audio cable
+//
+// For consistency, this program *should* be modified to leverage off
+// of the ctrl-E bracketing for binary file uploads, and the a formalization
+// of ctrl-A behavior for fileServer mode.
+//
+// OLD COMMENTS:
 //
 // This program has to accomplish the following, all simultaneously.
 //
-//     - echo the rPi serial port to the main usb serial port
-//       for "normal" debugging output.  This "normal" echo
+//     - echo the SERIAL_PORT_RPI to SERIAL_PORT_USB for "normal"
+//       Looper (rPi) debugging output.  This "normal" echo
 //       of REGULAR TEXT (and CR,LF, and ESC) is also used
 //
-//           (a) by the CONSOLE program to notice that the
+//           (a) by the console.pm program to notice that the
 //               pi has rebooted and to upload a kernel.img
 //               using the "serial protocol"
 //
-//           (b) within the "serial protocol" for ACK, NAK, and QUIT
-//               "k","n",and "q", respectively. Note that it is
-//               still "plain text + cr/lf/esc).
+//           (b) within the kernel upload binary serial protocol"
+//               for ACK, NAK, and QUIT ("k","n",and "q") sent from
+//               the rPi to the console.pm program. Note that these are
+//               still "plain text.
 //
 //     - echo whatever comes in over the main usb serial port to the rPi
 //       This is primarly used in the bootloader to receive a kernel.img.
@@ -103,7 +107,12 @@
 #define dbg_fs_data  1
 #define dbg_midi_data  0
 
-#define TEENSY_PI_LOOPER_VERSION  "v2.1"
+#define TEENSY_PI_LOOPER_VERSION  "v2.2"
+
+#define SERIAL_PORT_USB     Serial      // the usb serial port on the teensy 3.2
+#define SERIAL_PORT_RPI     Serial1     // the serial port connected to the rPi
+#define SERIAL_PORT_TE      Serial2     // the serial port with a 1/8" jack to the TE1/2
+
 
 
 #define SENSE_RPI_RUN       11      // sense rpi RUN (REBBOOT) pin, HIGH == rpi has voltage
@@ -165,12 +174,12 @@ void rebootPi()
 
 void setup()
 {
-    Serial.begin(115200);
+    SERIAL_PORT_USB.begin(115200);
     delay(5000);
     setColorString(COLOR_CONST_DEFAULT, "\033[94m");       // bright blue
     display(0,"teensyPiLooper " TEENSY_PI_LOOPER_VERSION " started",0);
-    Serial1.begin(115200);
-    Serial2.begin(115200);
+    SERIAL_PORT_RPI.begin(115200);
+    SERIAL_PORT_TE.begin(115200);
 
     rpi_running = 0;
     rpi_ready = 0;
@@ -203,8 +212,8 @@ volatile int fu = 0;
 
 
 bool handleMidi(int snum, int c)
-    // called with snum=0 for Serial1 (from rPi) or
-    // snum=1 for Serial2 (from TE).  This is the
+    // called with snum=0 for SERIAL_PORT_RPI (from rPi) or
+    // snum=1 for SERIAL_PORT_TE (from TE).  This is the
     // algorithm I finally came up with ...
 {
     // if we see a serial midi start token,
@@ -222,13 +231,13 @@ bool handleMidi(int snum, int c)
         {
             if (snum)
             {
-                while (!Serial2.available())    {fu++;}
-                buf[i+1] = Serial2.read();
+                while (!SERIAL_PORT_TE.available())    {fu++;}
+                buf[i+1] = SERIAL_PORT_TE.read();
             }
             else
             {
-                while (!Serial1.available())    {fu++;}
-                buf[i+1] = Serial1.read();
+                while (!SERIAL_PORT_RPI.available())    {fu++;}
+                buf[i+1] = SERIAL_PORT_RPI.read();
             }
         }
 
@@ -236,9 +245,9 @@ bool handleMidi(int snum, int c)
             snum ? "TE-->RPI" : "RPI-->TE", buf[0],buf[1],buf[2],buf[3],snum);
 
         if (snum)
-            Serial1.write(buf,4);
+            SERIAL_PORT_RPI.write(buf,4);
         else
-            Serial2.write(buf,4);
+            SERIAL_PORT_TE.write(buf,4);
 
         return true;
     }
@@ -264,19 +273,19 @@ void loop()
     }
 
 
-    if (Serial.available())
+    if (SERIAL_PORT_USB.available())
     {
-        int c = Serial.read();
+        int c = SERIAL_PORT_USB.read();
 
         if (dbg_fs_data==0 && file_server_mode)
         {
-            display(0,"teensyPiLoper got Serial: chr=0x%02x '%c'",c,c>32?c:' ');
+            display(0,"teensyPiLoper got USB: chr=0x%02x '%c'",c,c>32?c:' ');
         }
 
         if (m_key_pressed)
         {
-            Serial.write(m_key_pressed);
-            Serial1.write(c);
+            SERIAL_PORT_USB.write(m_key_pressed);
+            SERIAL_PORT_RPI.write(c);
             m_key_pressed = c;
             m_key_timer = 0;
         }
@@ -290,16 +299,16 @@ void loop()
         {
             // normally we write the incoming bytes to the rPi ..
             // in file_server_mode, we write them to the teenssyExpression
-            // over the Serial2 port
+            // over the SERIAL_PORT_TE port
 
             if (file_server_mode)
             {
-                display(dbg_fs_data,"teensyPiLoper sending Serial2: chr=0x%02x '%c'",c,c>32?c:' ');
-                Serial2.write(c);
+                display(dbg_fs_data,"teensyPiLoper sending TE: chr=0x%02x '%c'",c,c>32?c:' ');
+                SERIAL_PORT_TE.write(c);
             }
             else
             {
-                Serial1.write(c);
+                SERIAL_PORT_RPI.write(c);
             }
 
             m_key_timer = 0;
@@ -324,22 +333,22 @@ void loop()
     }
 
 
-    if (Serial1.available())
+    if (SERIAL_PORT_RPI.available())
     {
-        int c = Serial1.read();
+        int c = SERIAL_PORT_RPI.read();
         if (!handleMidi(0,c))
-            Serial.write(c);
+            SERIAL_PORT_USB.write(c);
     }
 
 
-    if (Serial2.available())
+    if (SERIAL_PORT_TE.available())
     {
-        int c = Serial2.read();
+        int c = SERIAL_PORT_TE.read();
         if (!handleMidi(1,c))
         {
             if (file_server_mode)
             {
-                Serial.write(c);
+                SERIAL_PORT_USB.write(c);
                 file_server_time = 0;
             }
             else
@@ -352,8 +361,8 @@ void loop()
                     {
                         if (line_ptr)
                         {
-                            Serial.print("TE: ");
-                            Serial.println((const char *)line_buffer);
+                            SERIAL_PORT_USB.print("TE: ");
+                            SERIAL_PORT_USB.println((const char *)line_buffer);
                         }
                         line_buffer[0] = 0;
                         line_ptr = 0;
@@ -367,7 +376,7 @@ void loop()
 
             }   // Not file_server_mode (TE alternate debugging/monitor output)
         }   // Not 0x0b (midi message start)
-    }   // Serial2.available()
+    }   // SERIAL_PORT_TE.available()
 
 
     if (file_server_mode && file_server_time > FILE_SERVER_TIMEOUT)
