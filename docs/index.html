@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="sidebar">
+        <h2>Documentation</h2>
+        <ul>
+            <li>
+                <span class="folder" onclick="toggle(this)">Getting Started</span>
+                <ul class="nested">
+                    <li><a href="getting-started.html">Introduction</a></li>
+                </ul>
+            </li>
+            <li>
+                <span class="folder" onclick="toggle(this)">API Reference</span>
+                <ul class="nested">
+                    <li><a href="api-reference.html">Overview</a></li>
+                    <li>
+                        <span class="folder" onclick="toggle(this)">Endpoints</span>
+                        <ul class="nested">
+                            <li><a href="api/user.html">User  API</a></li>
+                            <li><a href="api/product.html">Product API</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div id="content">
+        <h1>Welcome to the Documentation</h1>
+        <p>This is the main content area.</p>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
