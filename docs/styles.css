@@ -1,18 +1,50 @@
 /* styles.css */
-body {
-    display: flex;
-    font-family: Arial, sans-serif;
+
+* {
+    box-sizing: border-box; /* Ensure padding and borders are included in element's total width and height */
 }
 
-#sidebar {
-    width: 250px;
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Full height of the viewport */
+}
+
+#header {
+    background-color: #4CAF50; /* Header background color */
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+#main {
+    display: flex;
+    flex: 1; /* Take up remaining space */
+}
+
+#sidebar-left, #sidebar-right {
+    width: 250px; /* Fixed width for sidebars */
     background-color: #f4f4f4;
     padding: 15px;
     border-right: 1px solid #ccc;
 }
 
-#sidebar h2 {
-    margin-top: 0;
+#sidebar-right {
+    border-left: 1px solid #ccc; /* Add border to the right sidebar */
+}
+
+#content {
+    flex: 1; /* Take up remaining space */
+    padding: 15px;
+}
+
+#footer {
+    background-color: #333; /* Footer background color */
+    color: white;
+    text-align: center;
+    padding: 10px;
 }
 
 ul {
@@ -23,32 +55,5 @@ ul {
 .nested {
     display: none; /* Hide nested lists by default */
     padding-left: 20px; /* Indent nested lists */
-}
 
-.folder {
-    cursor: pointer;
-    color: blue;
-    text-decoration: underline;
-}
-
-.folder:hover {
-    text-decoration: none;
-}
-
-/* Triangle icon styles */
-.folder::before {
-    content: '';
-    display: inline-block;
-    width: 0;
-    height: 0;
-    margin-right: 5px;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-bottom: 5px solid black; /* Downward triangle */
-    transition: transform 0.2s;
-}
-
-.folder.expanded::before {
-    transform: rotate(180deg); /* Rotate triangle when expanded */
-}
 

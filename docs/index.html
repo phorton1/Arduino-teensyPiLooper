@@ -7,33 +7,60 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="sidebar">
-        <h2>Documentation</h2>
-        <ul>
-            <li>
-                <span class="folder" onclick="toggle(this)">&#9654; Getting Started</span>
-                <ul class="nested">
-                    <li><a href="getting-started.html">Introduction</a></li>
-                </ul>
-            </li>
-            <li>
-                <span class="folder" onclick="toggle(this)">&#9654; API Reference</span>
-                <ul class="nested">
-                    <li><a href="api-reference.html">Overview</a></li>
-                    <li>
-                        <span class="folder" onclick="toggle(this)">&#9654; Endpoints</span>
-                        <ul class="nested">
-                            <li><a href="api/user.html">User  API</a></li>
-                            <li><a href="api/product.html">Product API</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-        </ul>
+    <div id="header">
+        <h1>My Project Documentation</h1>
+        <h2>Comprehensive Guide to Using My Project</h2>
     </div>
-    <div id="content">
-        <h1>Welcome to the Documentation</h1>
-        <p>This is the main content area.</p>
+    <div id="main">
+        <div id="sidebar-left">
+            <h2>Documentation</h2>
+            <ul>
+                <li>
+                    <a href="getting-started.html" class="folder" onclick="toggle(event, this)">Getting Started</a>
+                    <ul class="nested">
+                        <li><a href="getting-started.html">Introduction</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="api-reference.html" class="folder" onclick="toggle(event, this)">API Reference</a>
+                    <ul class="nested">
+                        <li><a href="api-reference.html">Overview</a></li>
+                        <li>
+                            <a href="#" class="folder" onclick="toggle(event, this)">Endpoints</a>
+                            <ul class="nested">
+                                <li><a href="api/user.html">User  API</a></li>
+                                <li><a href="api/product.html">Product API</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div id="content">
+            <h1>Welcome to the Documentation</h1>
+            <p>This is the main content area.</p>
+        </div>
+        <div id="sidebar-right">
+            <h2>On This Page</h2>
+            <ul>
+                <li>
+                    <a href="#" class="folder" onclick="toggle(event, this)">Section 1</a>
+                    <ul class="nested">
+                        <li><a href="#subsection1">Subsection 1.1</a></li>
+                        <li><a href="#subsection2">Subsection 1.2</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="folder" onclick="toggle(event, this)">Section 2</a>
+                    <ul class="nested">
+                        <li><a href="#subsection3">Subsection 2.1</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div id="footer">
+        <p>&copy; 2023 My Project. All rights reserved.</p>
     </div>
     <script src="script.js"></script>
 </body>
