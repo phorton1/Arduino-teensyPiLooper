@@ -16,46 +16,31 @@
             <h2>Documentation</h2>
             <ul>
                 <li>
-                    <a href="getting-started.html" class="folder" onclick="toggle(event, this)">Getting Started</a>
+                    <a href="#" class="folder" onclick="toggle(event, this)">Home</a>
                     <ul class="nested">
-                        <li><a href="getting-started.html">Introduction</a></li>
+                        <li><a href="#" onclick="loadContent('home.html')">Overview</a></li>
+                        <li><a href="#" onclick="loadContent('getting_started.html')">Getting Started</a></li>
                     </ul>
                 </li>
                 <li>
-                    <a href="api-reference.html" class="folder" onclick="toggle(event, this)">API Reference</a>
+                    <a href="#" class="folder" onclick="toggle(event, this)">Tech Docs</a>
                     <ul class="nested">
-                        <li><a href="api-reference.html">Overview</a></li>
-                        <li>
-                            <a href="#" class="folder" onclick="toggle(event, this)">Endpoints</a>
-                            <ul class="nested">
-                                <li><a href="api/user.html">User  API</a></li>
-                                <li><a href="api/product.html">Product API</a></li>
-                            </ul>
-                        </li>
+                        <li><a href="#" onclick="loadContent('tech_docs.html')">Tech Docs Overview</a></li>
+                        <li><a href="#" onclick="loadContent('api.html')">API</a></li>
+                        <li><a href="#" onclick="loadContent('details.html')">Details</a></li>
                     </ul>
                 </li>
             </ul>
         </div>
         <div id="content">
             <h1>Welcome to the Documentation</h1>
-            <p>This is the main content area.</p>
+            <p>This is the main content area. Click on the links in the left sidebar to load content.</p>
         </div>
         <div id="sidebar-right">
             <h2>On This Page</h2>
-            <ul>
-                <li>
-                    <a href="#" class="folder" onclick="toggle(event, this)">Section 1</a>
-                    <ul class="nested">
-                        <li><a href="#subsection1">Subsection 1.1</a></li>
-                        <li><a href="#subsection2">Subsection 1.2</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#" class="folder" onclick="toggle(event, this)">Section 2</a>
-                    <ul class="nested">
-                        <li><a href="#subsection3">Subsection 2.1</a></li>
-                    </ul>
-                </li>
+            <ul id="on-this-page">
+                <li><a href="#section1">Section 1</a></li>
+                <li><a href="#section2">Section 2</a></li>
             </ul>
         </div>
     </div>

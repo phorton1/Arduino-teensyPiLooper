@@ -55,5 +55,35 @@ ul {
 .nested {
     display: none; /* Hide nested lists by default */
     padding-left: 20px; /* Indent nested lists */
+}
 
+.folder {
+    cursor: pointer;
+    color: blue;
+    text-decoration: underline;
+    position: relative; /* Position relative for the triangle */
+}
+
+.folder::before {
+    content: '';
+    display: inline-block;
+    width: 0;
+    height    width: 0;
+    height: 0;
+    margin-right: 5px;
+    border-left: 5px solid black; /* Right-pointing triangle */
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    transition: transform 0.2s;
+}
+
+.folder.expanded::before {
+    transform: rotate(90deg); /* Rotate to point down when expanded */
+}
+
+.active {
+    font-weight: bold;
+    color: red; /* Change color to indicate active page */
+    pointer-events: none; /* Prevent clicking on the active link */
+}
 
